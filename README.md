@@ -1,9 +1,9 @@
 # squeal
-Winston wrapper for overriding console commands, with Sentry support,  in NodeJS
+Winston wrapper for overriding console commands, with Sentry support, in NodeJS
 
-# Author
+# Install
 
-This repo is created and maintained by MEERKATS in SUBIACO, WESTERN AUSTRALIA.
+`npm install squeal -g`
 
 # Usage
 
@@ -12,6 +12,8 @@ var squeal = require('squeal');
 squeal.sentry_dsn = 'my_sentry_dsn';
 squeal.createLoggers(['console', 'file', 'sentry']);
 ```
+All subsequent calls to console.log/debug/info/warm/error will be handled by the Winston
+transporters that were passed in to the `squeal.createLoggers` function.
 
 ## Access transport options
 
@@ -48,3 +50,7 @@ squeal.colors = {
     warn: 2,
     info: 1
 };
+
+# Author
+
+This repo is created and maintained by MEERKATS in SUBIACO, WESTERN AUSTRALIA.

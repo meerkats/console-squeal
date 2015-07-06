@@ -25,7 +25,7 @@ module.exports.levels = {
     error: 3
 };
 
-module.exports.transports = {
+module.exports.transports = transports = {
     console: {
         transport: winston.transports.Console,
         args: {
@@ -61,9 +61,8 @@ module.exports.transports = {
 };
 
 //Override the all of the console methods with the Winstons logger methods
-var log_methods = ['debug', 'info', 'warn', 'error'];
-log_methods.forEach(function (current, index, array) {
-    console[current] = function() {
+Object.keys(module.exports.levels).forEach(function (current, index, array) {
+    console[current] = function () {
         return logger[current].apply(current, arguments);
     };
 });
@@ -85,14 +84,15 @@ module.exports.createLoggers = function (transports, next) {
             if (!module.exports.sentry_dsn) {
                 callback(new Error('No Sentry dsn defined'));
             }
-            logger.add(module.exports.transports[item].transport,
-                        _.extend(module.exports.transports[item].args, {
-                            dsn: module.exports.sentry_dsn,
-                            enabled: module.exports.sentry_enabled
-                        }));
-        } else {
-            logger.add(module.exports.transports[item].transport,
-                        module.exports.transports[item].args);
+            logger.add(transports[item].transport,
+                       _.extend(transports[item].args, {
+                           dsn: module.exports.sentry_dsn,
+                           enabled: module.exports.sentry_enabled
+                       }));
+        }
+        else {
+            logger.add(transports[item].transport,
+                       transports[item].args);
         }
         return callback();
     }, next);
