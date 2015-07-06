@@ -78,11 +78,11 @@ console.log =  function () {
  * @param {array} Names of the transports that need to be created.
  * @param {object} Sentry dns and enabled status
  */
-module.exports.createLoggers = function (transports, next) {
-    async.each(transports, function (item, callback) {
+module.exports.createLoggers = function (transport_names, next) {
+    async.each(transport_names, function (item, callback) {
         if (item === 'sentry') {
             if (!module.exports.sentry_dsn) {
-                callback(new Error('No Sentry dsn defined'));
+                return callback(new Error('No Sentry dsn defined'));
             }
             logger.add(transports[item].transport,
                        _.extend(transports[item].args, {
