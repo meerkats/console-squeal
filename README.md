@@ -3,7 +3,7 @@ Winston wrapper for overriding console commands, with Sentry support, in NodeJS
 
 # Install
 
-`npm install squeal -g`
+`npm install squeal`
 
 # Usage
 
@@ -24,13 +24,13 @@ var squeal = require('squeal');
 //options, for example: level, colors, colorize, silent
 
 //Modify Console transport
-squeal.transports.Console.[Option];
+squeal.transports.Console[Option];
 
 //Modify File transport
-squeal.transports.File.[Option];
+squeal.transports.File[Option];
 
 //Modify Sentry transport
-squeal.transports.Sentry.[Option];
+squeal.transports.Sentry[Option];
 ```
 
 ## Access Winston global settings

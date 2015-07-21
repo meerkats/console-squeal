@@ -7,8 +7,6 @@ var logger = new winston.Logger({
     levels: module.exports.levels
 });
 
-module.exports.sentry_dsn = null;
-
 module.exports.sentry_enabled = true;
 
 module.exports.colors = {
@@ -61,9 +59,9 @@ module.exports.transports = transports = {
 };
 
 //Override the all of the console methods with the Winstons logger methods
-Object.keys(module.exports.levels).forEach(function (current, index, array) {
-    console[current] = function () {
-        return logger[current].apply(current, arguments);
+Object.keys(module.exports.levels).forEach(function (level, index, array) {
+    console[level] = function () {
+        return logger[level].apply(level, arguments);
     };
 });
 
@@ -87,7 +85,7 @@ module.exports.createLoggers = function (transport_names, next) {
             logger.add(transports[item].transport,
                        _.extend(transports[item].args, {
                            dsn: module.exports.sentry_dsn,
-                           enabled: module.exports.sentry_enabled
+                           enabled: true
                        }));
         }
         else {
