@@ -67,7 +67,7 @@ Object.keys(module.exports.levels).forEach(function (level, index, array) {
 
 //Override the console log and send it through to the logger info method.
 console.log =  function () {
-    return logger.info(arguments['0']);
+    return logger['info'].apply('info', arguments);
 };
 
 /**
