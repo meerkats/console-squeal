@@ -1,6 +1,6 @@
 {
   "name": "squeal",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Winston wrapper for overriding console commands, with Sentry support, in NodeJS.",
   "private": true,
   "dependencies": {
