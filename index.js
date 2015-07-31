@@ -7,7 +7,7 @@ var logger = new winston.Logger({
     levels: module.exports.levels
 });
 
-module.exports.sentry_enabled = true;
+module.exports.sentry_dsn = null;
 
 module.exports.colors = {
     debug: 'white',
