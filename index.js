@@ -60,7 +60,6 @@ module.exports.transports = transports = {
 
 /**
  * Overrides the default console logging methods log, warn and error.
- * Note
  */
 var registerConsole  = function () {
     //Override the all of the console methods with the Winstons logger methods
