@@ -1,5 +1,6 @@
 var _ = require('underscore');
 var async = require('async');
+var clone = require('./clone.js');
 var sentry = require('winston-sentry');
 var winston = require('winston');
 var logger = new winston.Logger({
@@ -7,22 +8,31 @@ var logger = new winston.Logger({
     levels: module.exports.levels
 });
 
-module.exports.sentry_dsn = null;
+var sentry_dsn = null;
 
-module.exports.colors = {
+var colors = {
     debug: 'white',
     info: 'green',
     warn: 'yellow',
     error: 'red'
 };
 
-module.exports.levels = {
+var levels = {
     debug: 0,
     info: 1,
     warn: 2,
     error: 3
 };
 
+var clone = function (func) {
+    var temp = function temporary() { return func.apply(this, arguments); };
+    for(var key in this) {
+        if (this.hasOwnProperty(key)) {
+            temp[key] = this[key];
+        }
+    }
+    return temp;
+}
 module.exports.transports = transports = {
     console: {
         transport: winston.transports.Console,
@@ -58,21 +68,34 @@ module.exports.transports = transports = {
     }
 };
 
+var defaultConsoleFunctions = {};
+
 /**
- * Overrides the default console logging methods log, warn and error.
+ * Overrides the default console logging methods (debug, log, warn and error) to pass arguments to releveant
+ * winston logger functions
  */
-var registerConsole  = function () {
+var start = function () {
     //Override the all of the console methods with the Winstons logger methods
-    Object.keys(module.exports.levels).forEach(function (level, index, array) {
+    async.forEachOf(module.exports.levels, function (level) {
+        defaultConsoleFunctions[level] = {name: level, func: console[level]};
         console[level] = function () {
             return logger[level].apply(level, arguments);
         };
     });
-
     //Override the console log and send it through to the logger info method.
+    defaultConsoleFunctions['log'] = {name: 'log', func: console['log']};
     console.log =  function () {
         return logger['info'].apply('info', arguments);
     };
+}
+
+/**
+ * Restores default console method behavior
+ */
+var stop = function () {
+    async.forEachOf(defaultConsoleFunctions, function (level) {
+        console[level.name] = level.func;
+    });
 }
 
 /**
@@ -81,10 +104,7 @@ var registerConsole  = function () {
  * @param {array} Names of the transports that need to be created.
  * @param {object} Sentry dns and enabled status
  */
-module.exports.createLoggers = function (transport_names, next) {
-    //Before we create the extra loggers we need to ensure that Squeal has overridden
-    //all of the console methods.
-    registerConsole();
+var createLoggers = function (transport_names, next) {
     async.each(transport_names, function (item, callback) {
         if (item === 'sentry') {
             if (!module.exports.sentry_dsn) {
@@ -102,4 +122,14 @@ module.exports.createLoggers = function (transport_names, next) {
         }
         return callback();
     }, next);
+};
+
+module.exports = {
+    createLoggers: createLoggers,
+    start: start,
+    stop: stop,
+    colors: colors,
+    levels: levels,
+    sentry_dsn: sentry_dsn,
+    transports: transports
 };
