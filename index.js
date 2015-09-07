@@ -58,17 +58,23 @@ module.exports.transports = transports = {
     }
 };
 
-//Override the all of the console methods with the Winstons logger methods
-Object.keys(module.exports.levels).forEach(function (level, index, array) {
-    console[level] = function () {
-        return logger[level].apply(level, arguments);
-    };
-});
+/**
+ * Overrides the default console logging methods log, warn and error.
+ * Note
+ */
+var registerConsole  = function () {
+    //Override the all of the console methods with the Winstons logger methods
+    Object.keys(module.exports.levels).forEach(function (level, index, array) {
+        console[level] = function () {
+            return logger[level].apply(level, arguments);
+        };
+    });
 
-//Override the console log and send it through to the logger info method.
-console.log =  function () {
-    return logger['info'].apply('info', arguments);
-};
+    //Override the console log and send it through to the logger info method.
+    console.log =  function () {
+        return logger['info'].apply('info', arguments);
+    };
+}
 
 /**
  * Creates the transports for Winston that are passed in.
@@ -77,6 +83,9 @@ console.log =  function () {
  * @param {object} Sentry dns and enabled status
  */
 module.exports.createLoggers = function (transport_names, next) {
+    //Before we create the extra loggers we need to ensure that Squeal has overridden
+    //all of the console methods.
+    registerConsole();
     async.each(transport_names, function (item, callback) {
         if (item === 'sentry') {
             if (!module.exports.sentry_dsn) {
