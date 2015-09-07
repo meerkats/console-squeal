@@ -1,6 +1,5 @@
 var _ = require('underscore');
 var async = require('async');
-var clone = require('./clone.js');
 var sentry = require('winston-sentry');
 var winston = require('winston');
 var logger = new winston.Logger({
