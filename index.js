@@ -164,7 +164,7 @@ function createLoggers(transportNames) {
  */
 function handleSentryTransport() {
     if (!module.exports.sentry_dsn) {
-        console.error('RMissing sentry dsn');
+        console.error('Missing sentry dsn');
     }
     logger.add(transports.sentry.transport,
         _.extend(transports.sentry.args, {
