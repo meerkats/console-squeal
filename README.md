@@ -10,8 +10,7 @@ Winston wrapper for overriding console commands, with Sentry support, in NodeJS
 ```
 var squeal = require('squeal');
 squeal.sentry_dsn = 'my_sentry_dsn';
-squeal.createLoggers(['console', 'file', 'sentry']);
-squeal.start();
+squeal.createLoggers(['console', 'file', 'sentry']).start();
 ```
 All subsequent calls to console.log/debug/info/warm/error will be handled by the Winston
 transporters that were passed in to the `squeal.createLoggers` function.
