@@ -16,7 +16,8 @@
     "mocha": "^2.3.3",
     "underscore": "^1.8.3",
     "winston": "^1.0.0",
-    "winston-sentry": "0.0.7"
+    "winston-sentry": "0.0.7",
+    "winston-slack": "git+ssh://git@github.com/craiglonsdale/winston-slack.git"
   },
   "engines": {
     "node": ">=0.10.22",

@@ -21,6 +21,7 @@ var logger = new winston.Logger({
 
 var sentryDsn = null;
 
+
 const transports = {
   console: {
     transport: winston.transports.Console,
@@ -41,6 +42,14 @@ const transports = {
       colorize: true,
       timestamp: true,
       handleExceptions: true
+    }
+  },
+  slack: {
+    transport: slack,
+    args: {
+      apiToken: '',
+      channel: '',
+      domain: ''
     }
   },
   sentry: {
