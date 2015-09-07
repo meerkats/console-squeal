@@ -21,6 +21,17 @@ var logger = new winston.Logger({
 
 var sentryDsn = null;
 
+var slack_options = {
+    api_token: null,
+    channel: null,
+    domain: null
+}
+var colors = {
+    debug: 'white',
+    info: 'green',
+    warn: 'yellow',
+    error: 'red'
+};
 
 const transports = {
   console: {
@@ -47,9 +58,12 @@ const transports = {
   slack: {
     transport: slack,
     args: {
-      apiToken: '',
-      channel: '',
-      domain: ''
+        level: 'info',
+        colorize: true,
+        timestamp: true,
+        handleExceptions: true,
+        prettyPrint: true,
+        silent: false
     }
   },
   sentry: {
@@ -134,12 +148,40 @@ function createLoggers(transportNames) {
                    enabled: true
                  }));
     }
+    else if (transport === 'slack') {
+      handleSlackTransport();
+    }
     else {
       logger.add(module.exports.transports[transport].transport,
                  module.exports.transports[transport].args);
     }
   });
   return module.exports;
+}
+
+/**
+ * Handles the creation of the Sentry transport
+ */
+var handleSentryTransport = function () {
+    if (!module.exports.sentry_dsn) {
+        console.error('No Sentry dsn defined');
+    }
+    logger.add(transports.sentry.transport,
+        _.extend(transports.sentry.args, {
+       dsn: module.exports.sentry_dsn,
+       enabled: true
+   }));
+}
+
+/**
+ * Handles the creation of the Slack transport
+ */
+var handleSlackTransport = function () {
+    var options = module.exports.slack_options;
+    if(!options.api_token || !options.channel || ! options.domain) {
+        logger.add(transports.slack.transport,
+            _.extend(transports.slack.args, options));
+    }
 }
 
 module.exports = {
