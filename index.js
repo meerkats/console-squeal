@@ -1,5 +1,6 @@
 var _ = require('underscore');
 var async = require('async');
+var clone = require('./clone.js');
 var sentry = require('winston-sentry');
 var winston = require('winston');
 var logger = new winston.Logger({
@@ -23,7 +24,7 @@ var levels = {
     error: 3
 };
 
-module.exports.transports = transports = {
+var transports = {
     console: {
         transport: winston.transports.Console,
         args: {
@@ -58,34 +59,42 @@ module.exports.transports = transports = {
     }
 };
 
-var defaultConsoleFunctions = {};
+var default_console_functions = {};
 
 /**
  * Overrides the default console logging methods (debug, log, warn and error) to pass arguments to releveant
  * winston logger functions
  */
-var start = function () {
+function start() {
     //Override the all of the console methods with the Winstons logger methods
-    async.forEachOf(module.exports.levels, function (level) {
-        defaultConsoleFunctions[level] = {name: level, func: console[level]};
+    Object.keys(module.exports.levels).forEach(function (level) {
+        default_console_functions[level] = {
+            name: level,
+            func: console[level]
+        };
         console[level] = function () {
-            return logger[level].apply(level, arguments);
+            logger[level].apply(level, arguments);
         };
     });
     //Override the console log and send it through to the logger info method.
-    defaultConsoleFunctions['log'] = {name: 'log', func: console['log']};
-    console.log =  function () {
-        return logger['info'].apply('info', arguments);
+    default_console_functions.log = {
+        name: 'log',
+        func: console.log
     };
+    console.log =  function () {
+        logger.info.apply('info', arguments);
+    };
+    return module.exports;
 }
 
 /**
  * Restores default console method behavior
  */
-var stop = function () {
-    async.forEachOf(defaultConsoleFunctions, function (level) {
-        console[level.name] = level.func;
+function stop() {
+    Object.keys(default_console_functions).forEach(function (level) {
+        console[level] = default_console_functions[level].func;
     });
+    return module.exports;
 }
 
 /**
@@ -94,24 +103,24 @@ var stop = function () {
  * @param {array} Names of the transports that need to be created.
  * @param {object} Sentry dns and enabled status
  */
-var createLoggers = function (transport_names, next) {
-    async.each(transport_names, function (item, callback) {
-        if (item === 'sentry') {
+function createLoggers(transport_names) {
+    transport_names.forEach(function (transport) {
+        if (transport === 'sentry') {
             if (!module.exports.sentry_dsn) {
-                return callback(new Error('No Sentry dsn defined'));
+                console.error('No Sentry dsn defined');
             }
-            logger.add(transports[item].transport,
+            logger.add(transports[transport].transport,
                        _.extend(transports[item].args, {
                            dsn: module.exports.sentry_dsn,
                            enabled: true
                        }));
         }
         else {
-            logger.add(transports[item].transport,
-                       transports[item].args);
+            logger.add(transports[transport].transport,
+                       transports[transport].args);
         }
-        return callback();
-    }, next);
+    });
+    return module.exports;
 };
 
 module.exports = {
