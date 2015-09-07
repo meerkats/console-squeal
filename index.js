@@ -162,7 +162,7 @@ function createLoggers(transportNames) {
 /**
  * Handles the creation of the Sentry transport
  */
-var handleSentryTransport = function () {
+function handleSentryTransport() {
     if (!module.exports.sentry_dsn) {
         console.error('RMissing sentry dsn');
     }
@@ -176,7 +176,7 @@ var handleSentryTransport = function () {
 /**
  * Handles the creation of the Slack transport
  */
-var handleSlackTransport = function () {
+function handleSlackTransport() {
     var options = module.exports.slack_options;
     if(!options.api_token || !options.channel || ! options.domain) {
         console.error('Missing required slack options');
