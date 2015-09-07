@@ -24,15 +24,6 @@ var levels = {
     error: 3
 };
 
-var clone = function (func) {
-    var temp = function temporary() { return func.apply(this, arguments); };
-    for(var key in this) {
-        if (this.hasOwnProperty(key)) {
-            temp[key] = this[key];
-        }
-    }
-    return temp;
-}
 module.exports.transports = transports = {
     console: {
         transport: winston.transports.Console,
