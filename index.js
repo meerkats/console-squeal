@@ -1,6 +1,7 @@
 const _ = require('underscore');
 const sentry = require('winston-sentry');
 const winston = require('winston');
+const slack = require('winston-slack');
 const colors = {
   debug: 'white',
   info: 'green',
@@ -14,6 +15,7 @@ const levels = {
   warn: 2,
   error: 3
 };
+
 var logger = new winston.Logger({
   colors: colors,
   levels: levels
@@ -21,16 +23,12 @@ var logger = new winston.Logger({
 
 var sentryDsn = null;
 
-var slack_options = {
-    api_token: null,
-    channel: null,
-    domain: null
-}
-var colors = {
-    debug: 'white',
-    info: 'green',
-    warn: 'yellow',
-    error: 'red'
+var slackOptions = {
+    webhook: '',
+    channel: '#integrationtesting',
+    username: 'stagedrive',
+    level: 'info',
+    handleExceptions: true
 };
 
 const transports = {
@@ -132,6 +130,7 @@ function removeLogger(transportName) {
  * @param {array} Names of the transports that need to be created.
  * @param {object} Sentry dns and enabled status
  */
+<<<<<<< HEAD
 function createLoggers(transportNames) {
   logger = new winston.Logger({
     colors: colors,
@@ -165,6 +164,7 @@ function createLoggers(transportNames) {
 function handleSentryTransport() {
     if (!module.exports.sentry_dsn) {
         console.error('Missing sentry dsn');
+        return;
     }
     logger.add(transports.sentry.transport,
         _.extend(transports.sentry.args, {
@@ -177,12 +177,12 @@ function handleSentryTransport() {
  * Handles the creation of the Slack transport
  */
 function handleSlackTransport() {
-    var options = module.exports.slack_options;
-    if(!options.api_token || !options.channel || ! options.domain) {
+    var options = module.exports.slackOptions;
+    if(!options.webhook || !options.channel) {
         console.error('Missing required slack options');
+        return;
     }
-    logger.add(transports.slack.transport,
-        _.extend(transports.slack.args, options));
+    logger.add(transports.slack.transport, options);
 
 }
 
