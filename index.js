@@ -136,14 +136,7 @@ function createLoggers(transportNames) {
   });
   transportNames.forEach(function (transport) {
     if (transport === 'sentry') {
-      if (!module.exports.sentryDsn) {
-        console.error('No Sentry dsn defined');
-      }
-      logger.add(module.exports.transports[transport].transport,
-                 _.extend(module.exports.transports[transport].args, {
-                   dsn: module.exports.sentryDsn,
-                   enabled: true
-                 }));
+      handleSentryTransport();
     }
     else if (transport === 'slack') {
       handleSlackTransport();
@@ -160,15 +153,14 @@ function createLoggers(transportNames) {
  * Handles the creation of the Sentry transport
  */
 function handleSentryTransport() {
-    if (!module.exports.sentry_dsn) {
-        console.error('Missing sentry dsn');
-        return;
-    }
-    logger.add(transports.sentry.transport,
-        extend(transports.sentry.args, {
-           dsn: module.exports.sentry_dsn,
-           enabled: true
-       }));
+  if (!module.exports.sentryDsn) {
+    console.error('No Sentry dsn defined');
+  }
+  logger.add(module.exports.transports[transport].transport,
+              _.extend(module.exports.transports[transport].args, {
+                dsn: module.exports.sentryDsn,
+                enabled: true
+              }));
 }
 
 /**
@@ -181,7 +173,7 @@ function handleSlackTransport() {
     return;
   }
   logger.add(transports.slack.transport,
-    extend(options, slack_options));
+    extend(options, slackOptions));
 }
 
 module.exports = {
