@@ -4,7 +4,6 @@
   "description": "Winston wrapper for overriding console commands, with Sentry support, in NodeJS.",
   "private": true,
   "dependencies": {
-    "async": "^1.4.0",
     "underscore": "^1.8.3",
     "winston": "^1.0.0",
     "winston-sentry": "0.0.7"
