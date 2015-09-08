@@ -30,7 +30,6 @@ var slackOptions = {
     username: 'stagedrive'
 };
 
-<<<<<<< HEAD
 const transports = {
   console: {
     transport: winston.transports.Console,
@@ -166,7 +165,7 @@ function handleSentryTransport() {
         return;
     }
     logger.add(transports.sentry.transport,
-        _.extend(transports.sentry.args, {
+        extend(transports.sentry.args, {
            dsn: module.exports.sentry_dsn,
            enabled: true
        }));
@@ -176,13 +175,13 @@ function handleSentryTransport() {
  * Handles the creation of the Slack transport
  */
 function handleSlackTransport() {
-    var options = module.exports.slackOptions;
-    if(!options.webhook || !options.channel) {
-        console.error('Missing required slack options');
-        return;
-    }
-    logger.add(transports.slack.transport,
-        _.extend(options, slack_options);
+  const options = module.exports.slackOptions;
+  if (!options.webhook || !options.channel) {
+    console.error('Missing required slack options');
+    return;
+  }
+  logger.add(transports.slack.transport,
+    extend(options, slack_options));
 }
 
 module.exports = {
