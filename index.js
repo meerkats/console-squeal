@@ -107,19 +107,19 @@ function createLoggers(transport_names) {
             if (!module.exports.sentry_dsn) {
                 console.error('No Sentry dsn defined');
             }
-            logger.add(transports[transport].transport,
-                       _.extend(transports[item].args, {
+            logger.add(module.exports.transports[transport].transport,
+                       _.extend(module.exports.transports[item].args, {
                            dsn: module.exports.sentry_dsn,
                            enabled: true
                        }));
         }
         else {
-            logger.add(transports[transport].transport,
-                       transports[transport].args);
+            logger.add(module.exports.transports[transport].transport,
+                       module.exports.transports[transport].args);
         }
     });
     return module.exports;
-};
+}
 
 module.exports = {
     createLoggers: createLoggers,
