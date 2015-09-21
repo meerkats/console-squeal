@@ -1,13 +1,6 @@
 var _ = require('underscore');
 var sentry = require('winston-sentry');
 var winston = require('winston');
-var logger = new winston.Logger({
-    colors: module.exports.colors,
-    levels: module.exports.levels
-});
-
-var sentry_dsn = null;
-
 var colors = {
     debug: 'white',
     info: 'green',
@@ -21,6 +14,13 @@ var levels = {
     warn: 2,
     error: 3
 };
+var logger = new winston.Logger({
+    colors: colors,
+    levels: levels
+});
+
+var sentry_dsn = null;
+
 
 var transports = {
     console: {
@@ -65,7 +65,7 @@ var default_console_functions = {};
  */
 function start() {
     //Override the all of the console methods with the Winstons logger methods
-    Object.keys(module.exports.levels).forEach(function (level) {
+    Object.keys(levels).forEach(function (level) {
         default_console_functions[level] = {
             name: level,
             func: console[level]
@@ -102,6 +102,10 @@ function stop() {
  * @param {object} Sentry dns and enabled status
  */
 function createLoggers(transport_names) {
+    logger = new winston.Logger({
+        colors: colors,
+        levels: levels
+    });
     transport_names.forEach(function (transport) {
         if (transport === 'sentry') {
             if (!module.exports.sentry_dsn) {
@@ -125,8 +129,6 @@ module.exports = {
     createLoggers: createLoggers,
     start: start,
     stop: stop,
-    colors: colors,
-    levels: levels,
     sentry_dsn: sentry_dsn,
     transports: transports
 };
