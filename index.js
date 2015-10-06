@@ -14,12 +14,12 @@ const levels = {
   warn: 2,
   error: 3
 };
-const logger = new winston.Logger({
+var logger = new winston.Logger({
   colors: colors,
   levels: levels
 });
 
-const sentryDsn = null;
+var sentryDsn = null;
 
 const transports = {
   console: {
@@ -56,7 +56,7 @@ const transports = {
   }
 };
 
-const defaultConsoleFunctions = {};
+var defaultConsoleFunctions = {};
 
 /**
  * Overrides the default console logging methods (debug, log, warn and error) to pass arguments to releveant
