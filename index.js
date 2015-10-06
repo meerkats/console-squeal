@@ -1,98 +1,106 @@
-var _ = require('underscore');
-var sentry = require('winston-sentry');
-var winston = require('winston');
-var colors = {
-    debug: 'white',
-    info: 'green',
-    warn: 'yellow',
-    error: 'red'
+const _ = require('underscore');
+const sentry = require('winston-sentry');
+const winston = require('winston');
+const colors = {
+  debug: 'white',
+  info: 'green',
+  warn: 'yellow',
+  error: 'red'
 };
 
-var levels = {
-    debug: 0,
-    info: 1,
-    warn: 2,
-    error: 3
+const levels = {
+  debug: 0,
+  info: 1,
+  warn: 2,
+  error: 3
 };
-var logger = new winston.Logger({
-    colors: colors,
-    levels: levels
+const logger = new winston.Logger({
+  colors: colors,
+  levels: levels
 });
 
-var sentry_dsn = null;
+const sentryDsn = null;
 
-
-var transports = {
-    console: {
-        transport: winston.transports.Console,
-        args: {
-            level: 'info',
-            colorize: true,
-            timestamp: true,
-            handleExceptions: true,
-            prettyPrint: true,
-            silent: false
-        }
-    },
-    file: {
-        transport: winston.transports.File,
-        args: {
-            filename: 'app.log',
-            level: 'debug',
-            colorize: true,
-            timestamp: true,
-            handleExceptions: true
-        }
-    },
-    sentry: {
-        transport: sentry,
-        args: {
-            level: 'error',
-            colorize: true,
-            timestamp: true,
-            handleExceptions: true,
-            prettyPrint: true,
-            silent: false
-        }
+const transports = {
+  console: {
+    transport: winston.transports.Console,
+    args: {
+      level: 'info',
+      colorize: true,
+      timestamp: true,
+      handleExceptions: true,
+      prettyPrint: true,
+      silent: false
     }
+  },
+  file: {
+    transport: winston.transports.File,
+    args: {
+      filename: 'app.log',
+      level: 'debug',
+      colorize: true,
+      timestamp: true,
+      handleExceptions: true
+    }
+  },
+  sentry: {
+    transport: sentry,
+    args: {
+      level: 'error',
+      colorize: true,
+      timestamp: true,
+      handleExceptions: true,
+      prettyPrint: true,
+      silent: false
+    }
+  }
 };
 
-var default_console_functions = {};
+const defaultConsoleFunctions = {};
 
 /**
  * Overrides the default console logging methods (debug, log, warn and error) to pass arguments to releveant
  * winston logger functions
  */
 function start() {
-    //Override the all of the console methods with the Winstons logger methods
-    Object.keys(levels).forEach(function (level) {
-        default_console_functions[level] = {
-            name: level,
-            func: console[level]
-        };
-        console[level] = function () {
-            logger[level].apply(level, arguments);
-        };
-    });
-    //Override the console log and send it through to the logger info method.
-    default_console_functions.log = {
-        name: 'log',
-        func: console.log
+  // Override the all of the console methods with the Winstons logger methods
+  Object.keys(levels).forEach(function (level) {
+    defaultConsoleFunctions[level] = {
+      name: level,
+      func: console[level]
     };
-    console.log =  function () {
-        logger.info.apply('info', arguments);
+    console[level] = function () {
+      logger[level].apply(level, arguments);
     };
-    return module.exports;
+  });
+  // Override the console log and send it through to the logger info method.
+  defaultConsoleFunctions.log = {
+    name: 'log',
+    func: console.log
+  };
+  console.log =  function () {
+    logger.info.apply('info', arguments);
+  };
+  return module.exports;
 }
 
 /**
  * Restores default console method behavior
  */
 function stop() {
-    Object.keys(default_console_functions).forEach(function (level) {
-        console[level] = default_console_functions[level].func;
-    });
-    return module.exports;
+  Object.keys(defaultConsoleFunctions).forEach(function (level) {
+    console[level] = defaultConsoleFunctions[level].func;
+  });
+  return module.exports;
+}
+
+/**
+ * Removes a transports from Winston.
+ * @param {string} Name of the transport to remove
+ * @param {object} Sentry dns and enabled status
+ */
+function removeLogger(transportName) {
+  logger.remove(transportName);
 }
 
 /**
@@ -101,34 +109,35 @@ function stop() {
  * @param {array} Names of the transports that need to be created.
  * @param {object} Sentry dns and enabled status
  */
-function createLoggers(transport_names) {
-    logger = new winston.Logger({
-        colors: colors,
-        levels: levels
-    });
-    transport_names.forEach(function (transport) {
-        if (transport === 'sentry') {
-            if (!module.exports.sentry_dsn) {
-                console.error('No Sentry dsn defined');
-            }
-            logger.add(module.exports.transports[transport].transport,
-                       _.extend(module.exports.transports[item].args, {
-                           dsn: module.exports.sentry_dsn,
-                           enabled: true
-                       }));
-        }
-        else {
-            logger.add(module.exports.transports[transport].transport,
-                       module.exports.transports[transport].args);
-        }
-    });
-    return module.exports;
+function createLoggers(transportNames) {
+  logger = new winston.Logger({
+    colors: colors,
+    levels: levels
+  });
+  transportNames.forEach(function (transport) {
+    if (transport === 'sentry') {
+      if (!module.exports.sentryDsn) {
+        console.error('No Sentry dsn defined');
+      }
+      logger.add(module.exports.transports[transport].transport,
+                 _.extend(module.exports.transports[transport].args, {
+                   dsn: module.exports.sentryDsn,
+                   enabled: true
+                 }));
+    }
+    else {
+      logger.add(module.exports.transports[transport].transport,
+                 module.exports.transports[transport].args);
+    }
+  });
+  return module.exports;
 }
 
 module.exports = {
-    createLoggers: createLoggers,
-    start: start,
-    stop: stop,
-    sentry_dsn: sentry_dsn,
-    transports: transports
+  createLoggers: createLoggers,
+  removeLogger: removeLogger,
+  start: start,
+  stop: stop,
+  sentryDsn: sentryDsn,
+  transports: transports
 };
