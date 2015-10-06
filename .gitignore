@@ -1,0 +1,21 @@
+lib-cov
+*.seed
+*.log
+*.dat
+*.out
+*.pid
+*.gz
+*.swp
+*.ini~
+.DS_Store
+
+pids
+logs
+results
+
+# vendor modules (npm + bower)
+
+npm-debug.log
+node_modules
+vendor/
+.vagrant/

@@ -3,7 +3,17 @@
   "version": "1.0.2",
   "description": "Winston wrapper for overriding console commands, with Sentry support, in NodeJS.",
   "private": true,
+  "scripts": {
+    "lint": "./node_modules/eslint/bin/eslint.js .",
+    "test-backend": "./node_modules/mocha/bin/mocha -R spec test/*.js",
+    "test": "npm run-script lint && npm run-script test-backend"
+  },
   "dependencies": {
+    "chai": "^3.3.0",
+    "eslint": "^1.5.1",
+    "eslint-config-meerkats": "*",
+    "eslint-plugin-shadow-exception": "^1.1.2",
+    "mocha": "^2.3.3",
     "underscore": "^1.8.3",
     "winston": "^1.0.0",
     "winston-sentry": "0.0.7"
