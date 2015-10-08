@@ -19,7 +19,7 @@
     "util-extend": "^1.0.1",
     "winston": "^1.0.0",
     "winston-sentry": "0.0.7",
-    "winston-slacker": "git+ssh://git@github.com/meerkats/winston-slacker.git#feature/Initial-implemtation-slack-webhooks"
+    "winston-slacker": "git+ssh://git@github.com:meerkats/winston-slacker.git"
   },
   "engines": {
     "node": ">=0.10.22",
