@@ -1,4 +1,3 @@
-
 const _ = require('underscore');
 const sentry = require('winston-sentry');
 const winston = require('winston');
@@ -149,7 +148,7 @@ function handleSlackTransport(transport) {
     return;
   }
   logger.add(module.exports.transports[transport].transport,
-    extend(module.exports.transports[transport].args,
+    _.extend(module.exports.transports[transport].args,
       module.exports.slackOptions));
 }
 
