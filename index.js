@@ -25,9 +25,9 @@ var logger = new winston.Logger({
 var sentryDsn = null;
 
 var slackOptions = {
-    webhook: '',
-    channel: '#integrationtesting',
-    username: 'stagedrive'
+  webhook: '',
+  channel: '#integrationtesting',
+  username: 'stagedrive'
 };
 
 const transports = {
@@ -55,12 +55,12 @@ const transports = {
   slack: {
     transport: slack,
     args: {
-        level: 'info',
-        colorize: true,
-        timestamp: true,
-        handleExceptions: true,
-        prettyPrint: true,
-        silent: false
+      level: 'info',
+      colorize: true,
+      timestamp: true,
+      handleExceptions: true,
+      prettyPrint: true,
+      silent: false
     }
   },
   sentry: {
@@ -124,32 +124,6 @@ function removeLogger(transportName) {
 }
 
 /**
- * Creates the transports for Winston that are passed in.
- * Additional propertioes necessary for sentry use.
- * @param {array} Names of the transports that need to be created.
- * @param {object} Sentry dns and enabled status
- */
-function createLoggers(transportNames) {
-  logger = new winston.Logger({
-    colors: colors,
-    levels: levels
-  });
-  transportNames.forEach(function (transport) {
-    if (transport === 'sentry') {
-      handleSentryTransport();
-    }
-    else if (transport === 'slack') {
-      handleSlackTransport();
-    }
-    else {
-      logger.add(module.exports.transports[transport].transport,
-                 module.exports.transports[transport].args);
-    }
-  });
-  return module.exports;
-}
-
-/**
  * Handles the creation of the Sentry transport
  */
 function handleSentryTransport() {
@@ -174,6 +148,32 @@ function handleSlackTransport() {
   }
   logger.add(transports.slack.transport,
     extend(options, slackOptions));
+}
+
+/**
+ * Creates the transports for Winston that are passed in.
+ * Additional propertioes necessary for sentry use.
+ * @param {array} Names of the transports that need to be created.
+ * @param {object} Sentry dns and enabled status
+ */
+function createLoggers(transportNames) {
+  logger = new winston.Logger({
+    colors: colors,
+    levels: levels
+  });
+  transportNames.forEach(function (transport) {
+    if (transport === 'sentry') {
+      handleSentryTransport();
+    }
+    else if (transport === 'slack') {
+      handleSlackTransport();
+    }
+    else {
+      logger.add(module.exports.transports[transport].transport,
+                 module.exports.transports[transport].args);
+    }
+  });
+  return module.exports;
 }
 
 module.exports = {
