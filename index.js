@@ -130,6 +130,7 @@ function removeLogger(transportName) {
 function handleSentryTransport(transport) {
   if (!module.exports.sentryDsn) {
     console.error('No Sentry dsn defined');
+    return;
   }
   logger.add(module.exports.transports[transport].transport,
               _.extend(module.exports.transports[transport].args, {
@@ -143,7 +144,7 @@ function handleSentryTransport(transport) {
  * @params {string} Name of the transport
  */
 function handleSlackTransport(transport) {
-  if (!options.webhook || !options.channel) {
+  if (!module.exports.slackOptions.webhook || !module.exports.slackOptions.channel) {
     console.error('Missing required slack options');
     return;
   }
