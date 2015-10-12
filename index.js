@@ -1,4 +1,4 @@
-const _ = require('underscore');
+const extend = require('util-extend');
 const sentry = require('winston-sentry');
 const winston = require('winston');
 const slack = require('winston-slacker');
@@ -132,7 +132,7 @@ function handleSentryTransport(transport) {
     return;
   }
   logger.add(module.exports.transports[transport].transport,
-              _.extend(module.exports.transports[transport].args, {
+              extend(module.exports.transports[transport].args, {
                 dsn: module.exports.sentryDsn,
                 enabled: true
               }));
@@ -148,7 +148,7 @@ function handleSlackTransport(transport) {
     return;
   }
   logger.add(module.exports.transports[transport].transport,
-              _.extend(module.exports.transports[transport].args,
+              extend(module.exports.transports[transport].args,
               module.exports.slackOptions));
 }
 
