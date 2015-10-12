@@ -148,8 +148,8 @@ function handleSlackTransport(transport) {
     return;
   }
   logger.add(module.exports.transports[transport].transport,
-    _.extend(module.exports.transports[transport].args,
-      module.exports.slackOptions));
+              _.extend(module.exports.transports[transport].args,
+              module.exports.slackOptions));
 }
 
 /**
