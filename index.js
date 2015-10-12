@@ -143,7 +143,7 @@ function handleSentryTransport(transport) {
  * @params {string} Name of the transport
  */
 function handleSlackTransport(transport) {
-  if (!module.exports.slackOptions.webhook || !module.exports.slackOptions.channel) {
+  if (!module.exports.slackOptions.webhook) {
     console.error('Missing required slack options');
     return;
   }
