@@ -22,7 +22,7 @@ describe('#createLoggers', function () {
     }).to.throw(Error);
   });
   it('Should not fail if valid Slack webhook is given', function () {
-    squeal.slackOptions.webhook = 'https://hooks.slack.com/services/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';
+    squeal.slackOptions.webhook = 'https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX';
     squeal.createLoggers(['slack']);
     expect(function () {
       squeal.removeLogger('slack');
