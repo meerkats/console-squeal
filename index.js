@@ -1,7 +1,7 @@
 const extend = require('util-extend');
 const sentry = require('winston-sentry');
-const winston = require('winston');
 const slack = require('winston-slacker');
+const winston = require('winston');
 const colors = {
   debug: 'white',
   info: 'green',
@@ -131,11 +131,12 @@ function handleSentryTransport(transport) {
     console.error('No Sentry dsn defined');
     return;
   }
-  logger.add(module.exports.transports[transport].transport,
-              extend(module.exports.transports[transport].args, {
-                dsn: module.exports.sentryDsn,
-                enabled: true
-              }));
+  const sentryTransport = module.exports.transports[transport].transport;
+  const options = extend(module.exports.transports[transport].args, {
+    dsn: module.exports.sentryDsn,
+    enabled: true
+  });
+  logger.add(sentryTransport, options);
 }
 
 /**
@@ -147,9 +148,10 @@ function handleSlackTransport(transport) {
     console.error('Missing required slack options');
     return;
   }
-  logger.add(module.exports.transports[transport].transport,
-              extend(module.exports.transports[transport].args,
-              module.exports.slackOptions));
+  const slackTransport = module.exports.transports[transport].transport;
+  const options = extend(module.exports.transports[transport].args,
+                          module.exports.slackOptions);
+  logger.add(slackTransport, options);
 }
 
 /**
@@ -164,15 +166,16 @@ function createLoggers(transportNames) {
     levels: levels
   });
   transportNames.forEach(function (transport) {
-    if (transport === 'sentry') {
+    switch (transport) {
+    case 'sentry':
       handleSentryTransport(transport);
-    }
-    else if (transport === 'slack') {
+      break;
+    case 'slack':
       handleSlackTransport(transport);
-    }
-    else {
+      break;
+    default:
       logger.add(module.exports.transports[transport].transport,
-                 module.exports.transports[transport].args);
+               module.exports.transports[transport].args);
     }
   });
   return module.exports;
