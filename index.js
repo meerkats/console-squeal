@@ -25,8 +25,8 @@ var sentryDsn = null;
 
 var slackOptions = {
   webhook: '',
-  channel: '#integrationtesting',
-  username: 'stagedrive'
+  channel: '#general',
+  username: 'squeal'
 };
 
 const transports = {
@@ -131,8 +131,8 @@ function handleSentryTransport(transport) {
     console.error('No Sentry dsn defined');
     return;
   }
-  const sentryTransport = module.exports.transports[transport].transport;
-  const options = extend(module.exports.transports[transport].args, {
+  const sentryTransport = transports[transport].transport;
+  const options = extend(transports[transport].args, {
     dsn: module.exports.sentryDsn,
     enabled: true
   });
@@ -148,9 +148,9 @@ function handleSlackTransport(transport) {
     console.error('Missing required slack options');
     return;
   }
-  const slackTransport = module.exports.transports[transport].transport;
-  const options = extend(module.exports.transports[transport].args,
-                          module.exports.slackOptions);
+  const slackTransport = transports[transport].transport;
+  const options = extend(transports[transport].args,
+                         module.exports.slackOptions);
   logger.add(slackTransport, options);
 }
 
@@ -174,8 +174,8 @@ function createLoggers(transportNames) {
       handleSlackTransport(transport);
       break;
     default:
-      logger.add(module.exports.transports[transport].transport,
-               module.exports.transports[transport].args);
+      logger.add(transports[transport].transport,
+                 transports[transport].args);
     }
   });
   return module.exports;
@@ -187,6 +187,5 @@ module.exports = {
   start: start,
   stop: stop,
   sentryDsn: sentryDsn,
-  slackOptions: slackOptions,
-  transports: transports
+  slackOptions: slackOptions
 };
