@@ -1,5 +1,6 @@
-const _ = require('underscore');
+const extend = require('util-extend');
 const sentry = require('winston-sentry');
+const slack = require('winston-slacker');
 const winston = require('winston');
 const colors = {
   debug: 'white',
@@ -14,12 +15,19 @@ const levels = {
   warn: 2,
   error: 3
 };
+
 var logger = new winston.Logger({
   colors: colors,
   levels: levels
 });
 
 var sentryDsn = null;
+
+var slackOptions = {
+  webhook: '',
+  channel: '#general',
+  username: 'squeal'
+};
 
 const transports = {
   console: {
@@ -41,6 +49,17 @@ const transports = {
       colorize: true,
       timestamp: true,
       handleExceptions: true
+    }
+  },
+  slack: {
+    transport: slack,
+    args: {
+      level: 'info',
+      colorize: true,
+      timestamp: true,
+      handleExceptions: true,
+      prettyPrint: true,
+      silent: false
     }
   },
   sentry: {
@@ -104,6 +123,38 @@ function removeLogger(transportName) {
 }
 
 /**
+ * Handles the creation of the Sentry transport
+ * @params {string} Name of the transport
+ */
+function handleSentryTransport(transport) {
+  if (!module.exports.sentryDsn) {
+    console.error('No Sentry dsn defined');
+    return;
+  }
+  const sentryTransport = transports[transport].transport;
+  const options = extend(transports[transport].args, {
+    dsn: module.exports.sentryDsn,
+    enabled: true
+  });
+  logger.add(sentryTransport, options);
+}
+
+/**
+ * Handles the creation of the Slack transport
+ * @params {string} Name of the transport
+ */
+function handleSlackTransport(transport) {
+  if (!module.exports.slackOptions.webhook) {
+    console.error('Missing required slack options');
+    return;
+  }
+  const slackTransport = transports[transport].transport;
+  const options = extend(transports[transport].args,
+                         module.exports.slackOptions);
+  logger.add(slackTransport, options);
+}
+
+/**
  * Creates the transports for Winston that are passed in.
  * Additional propertioes necessary for sentry use.
  * @param {array} Names of the transports that need to be created.
@@ -115,19 +166,16 @@ function createLoggers(transportNames) {
     levels: levels
   });
   transportNames.forEach(function (transport) {
-    if (transport === 'sentry') {
-      if (!module.exports.sentryDsn) {
-        console.error('No Sentry dsn defined');
-      }
-      logger.add(module.exports.transports[transport].transport,
-                 _.extend(module.exports.transports[transport].args, {
-                   dsn: module.exports.sentryDsn,
-                   enabled: true
-                 }));
-    }
-    else {
-      logger.add(module.exports.transports[transport].transport,
-                 module.exports.transports[transport].args);
+    switch (transport) {
+    case 'sentry':
+      handleSentryTransport(transport);
+      break;
+    case 'slack':
+      handleSlackTransport(transport);
+      break;
+    default:
+      logger.add(transports[transport].transport,
+                 transports[transport].args);
     }
   });
   return module.exports;
@@ -139,5 +187,5 @@ module.exports = {
   start: start,
   stop: stop,
   sentryDsn: sentryDsn,
-  transports: transports
+  slackOptions: slackOptions
 };
