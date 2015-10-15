@@ -1,8 +1,8 @@
 {
   "name": "squeal",
-  "version": "1.0.2",
-  "description": "Winston wrapper for overriding console commands, with Sentry support, in NodeJS.",
-  "private": true,
+  "version": "1.0.3",
+  "description": "Winston wrapper for overriding console commands with Sentry and Slack support.",
+  "main": "index.js",
   "scripts": {
     "lint": "./node_modules/eslint/bin/eslint.js .",
     "test-backend": "./node_modules/mocha/bin/mocha -R spec test/*.js",
@@ -22,12 +22,24 @@
     "winston-sentry": "0.0.7",
     "winston-slacker": "^1.0.1"
   },
+  "license": "MIT",
   "engines": {
     "node": ">=0.10.22",
     "npm": ">=1.3.14"
   },
   "repository": {
+    "type": "git",
     "url": "git@github.com:meerkats/squeal.git"
   },
+  "bugs": {
+    "url": "https://github.com/meerkats/winston-slacker/issues"
+  },
+  "keywords": [
+    "sentry",
+    "slack",
+    "winston",
+    "log",
+    "logger"
+ ],
   "author": "Meerkats <develop@meerkats.com.au> (http://meerkats.com.au)"
 }
