@@ -1,6 +1,6 @@
 {
   "name": "console-squeal",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Winston wrapper for overriding console commands with Sentry and Slack support.",
   "main": "index.js",
   "scripts": {
