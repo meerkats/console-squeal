@@ -17,7 +17,7 @@ squeal.slackOptions.webhook = 'my_slack_webhook';
 squeal.createLoggers(['console', 'file', 'sentry', 'slack']).start();
 ```
 
-All subsequent calls to console.log/debug/info/warm/error will be handled by the Winston
+All subsequent calls to console.log/debug/info/warn/error will be handled by the Winston
 transporters that were passed in to the `squeal.createLoggers` function.
 
 To revert back to original console behavior.
