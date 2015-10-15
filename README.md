@@ -13,7 +13,7 @@ npm install console-squeal
 ```js
 var squeal = require('console-squeal');
 squeal.sentryDsn = 'my_sentry_dsn';
-squeal.slackOptions.webhooke = 'my_slack_webhook';
+squeal.slackOptions.webhook = 'my_slack_webhook';
 squeal.createLoggers(['console', 'file', 'sentry', 'slack']).start();
 ```
 
